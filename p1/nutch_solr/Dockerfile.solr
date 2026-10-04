@@ -1,0 +1,6 @@
+#solr:9.8.1
+FROM solr@sha256:7803041d80c1e66967bd92968fccab9d5bf697e812e3cec5e769f64e8976098b
+COPY schema.xml solr:/var/solr/data/nutch/conf/managed-schema.xml
+user root
+RUN apt-get update && apt-get install -y nano && rm -rf /var/lib/apt/lists/*
+user solr

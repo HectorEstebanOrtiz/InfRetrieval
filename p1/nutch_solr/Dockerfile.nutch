@@ -1,0 +1,6 @@
+#nutch:release-1.20
+FROM apache/nutch@sha256:75ca6ea9fcd16f58edd46273e929679a395971f16e85149b19b6068c7e3a7b39
+COPY nutch-site.xml /root/nutch_source/runtime/local/conf/nutch-site.xml
+COPY regex-urlfilter.txt /root/nutch_source/runtime/local/conf/regex-urlfilter.txt
+COPY seed.txt /nutch/urls/seed.txt
+RUN apk update && apk add --no-cache nano
