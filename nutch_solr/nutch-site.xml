@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+	<property>
+    	<name>http.agent.name</name>
+    	#elegid cada uno un valor diferente
+    	<value>My Nutch Spider</value>
+	</property>
+	<property>
+	    <name>http.content.limit</name>
+	    <value>-1</value>
+	</property>
+	<property>
+	    <name>db.max.outlinks.per.page</name>
+	    <value>-1</value>
+	</property>
+	<property>
+    	<name>fetcher.server.delay</name>
+    	<value>0.1</value>
+	</property>
+	<property>
+  	<name>solr.server.url</name>
+  	<value>http://localhost:8983/solr/nutch</value>
+	</property>
+</configuration>
+
+

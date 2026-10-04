@@ -1,0 +1,27 @@
+services:
+  solr:
+    build:
+      dockerfile: Dockerfile.solr
+    container_name: solr
+    ports:
+      - "8983:8983"
+    command:
+      - solr-precreate
+      - nutch
+    networks:
+      - solr_network
+
+  nutch:
+    build:
+      dockerfile: Dockerfile.nutch
+    container_name: nutch
+    network_mode: service:solr
+    depends_on:
+      - solr
+    working_dir: /nutch
+    entrypoint: ["/bin/bash"]
+    tty: true
+
+networks:
+  solr_network:
+    driver: bridge
