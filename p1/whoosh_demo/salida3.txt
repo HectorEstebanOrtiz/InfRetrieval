@@ -1,0 +1,78 @@
+tfidf:
+7     17-natura2k  Similarity score: 7.7080502011022105
+7     12-ign-fr-3 http://www.ign.fr  Similarity score: 4.0
+7     13-AEAG-7 http://data.eau-adour-garonne.fr http://www.eaufrance.fr  Similarity score: 4.0
+7     14-DIREN-1  Similarity score: 4.0
+7     15-SMEAG-1 http://www.garona-i-garonne.com http://www.garona-i-garonne.com/Territoire_71_3_3.php?pk_langue=3&id_page=71 http://www.smeag.fr  Similarity score: 4.0
+7     16-nuts http://geoportal.jrc.it/wmsconnector/WMSProxyServlet/JRC_GISCO_NUTS http://geoportal.jrc.it/wmsconnector/WMSProxyServlet/JRC_GISCO_COMMUNES  Similarity score: 4.0
+7     18-eurographics-1  Similarity score: 4.0
+7     19-DMA-CHE-1 //Esco (Ipa.cps.unizar.es)  Similarity score: 4.0
+7     20-IDE-GV-1  Similarity score: 4.0
+7     21-CLC2000_aragon  Similarity score: 4.0
+7     23-img2k_2 ftp://ftplmu.jrc.it/outgoing/Image2000  Similarity score: 4.0
+7     24-USGS-BULLETIN-1 http://greenwood.cr.usgs.gov/pub/bulletins/b2064-a/hailey.tar  Similarity score: 4.0
+7     25-USGS-DIGITAL-170  Similarity score: 4.0
+7     26-USGS-MINERAL-247  Similarity score: 4.0
+7     27-USGS-REPORTS-751  Similarity score: 4.0
+7     28-USGS-PROVISIONAL-1008  Similarity score: 4.0
+7     29-IDENA-AG-1 http://www.cfnavarra.es/agricultura  Similarity score: 4.0
+7     30-IDENA-S-1 http://www.cfnavarra.es/salud  Similarity score: 4.0
+8     12-ign-fr-3 http://www.ign.fr  Similarity score: 4.0
+8     13-AEAG-7 http://data.eau-adour-garonne.fr http://www.eaufrance.fr  Similarity score: 4.0
+8     14-DIREN-1  Similarity score: 4.0
+8     15-SMEAG-1 http://www.garona-i-garonne.com http://www.garona-i-garonne.com/Territoire_71_3_3.php?pk_langue=3&id_page=71 http://www.smeag.fr  Similarity score: 4.0
+8     16-nuts http://geoportal.jrc.it/wmsconnector/WMSProxyServlet/JRC_GISCO_NUTS http://geoportal.jrc.it/wmsconnector/WMSProxyServlet/JRC_GISCO_COMMUNES  Similarity score: 4.0
+8     17-natura2k  Similarity score: 4.0
+8     18-eurographics-1  Similarity score: 4.0
+8     19-DMA-CHE-1 //Esco (Ipa.cps.unizar.es)  Similarity score: 4.0
+8     20-IDE-GV-1  Similarity score: 4.0
+8     21-CLC2000_aragon  Similarity score: 4.0
+8     23-img2k_2 ftp://ftplmu.jrc.it/outgoing/Image2000  Similarity score: 4.0
+8     24-USGS-BULLETIN-1 http://greenwood.cr.usgs.gov/pub/bulletins/b2064-a/hailey.tar  Similarity score: 4.0
+8     25-USGS-DIGITAL-170  Similarity score: 4.0
+8     26-USGS-MINERAL-247  Similarity score: 4.0
+8     27-USGS-REPORTS-751  Similarity score: 4.0
+8     28-USGS-PROVISIONAL-1008  Similarity score: 4.0
+8     29-IDENA-AG-1 http://www.cfnavarra.es/agricultura  Similarity score: 4.0
+8     30-IDENA-S-1 http://www.cfnavarra.es/salud  Similarity score: 4.0
+8     01-mtn25  Similarity score: 3.302585092994046
+8     05-mtn50  Similarity score: 3.302585092994046
+7     17-natura2k  Similarity score: 7.7080502011022105
+7     12-ign-fr-3 http://www.ign.fr  Similarity score: 4.0
+7     13-AEAG-7 http://data.eau-adour-garonne.fr http://www.eaufrance.fr  Similarity score: 4.0
+7     14-DIREN-1  Similarity score: 4.0
+7     15-SMEAG-1 http://www.garona-i-garonne.com http://www.garona-i-garonne.com/Territoire_71_3_3.php?pk_langue=3&id_page=71 http://www.smeag.fr  Similarity score: 4.0
+7     16-nuts http://geoportal.jrc.it/wmsconnector/WMSProxyServlet/JRC_GISCO_NUTS http://geoportal.jrc.it/wmsconnector/WMSProxyServlet/JRC_GISCO_COMMUNES  Similarity score: 4.0
+7     18-eurographics-1  Similarity score: 4.0
+7     19-DMA-CHE-1 //Esco (Ipa.cps.unizar.es)  Similarity score: 4.0
+7     20-IDE-GV-1  Similarity score: 4.0
+7     21-CLC2000_aragon  Similarity score: 4.0
+7     23-img2k_2 ftp://ftplmu.jrc.it/outgoing/Image2000  Similarity score: 4.0
+7     24-USGS-BULLETIN-1 http://greenwood.cr.usgs.gov/pub/bulletins/b2064-a/hailey.tar  Similarity score: 4.0
+7     25-USGS-DIGITAL-170  Similarity score: 4.0
+7     26-USGS-MINERAL-247  Similarity score: 4.0
+7     27-USGS-REPORTS-751  Similarity score: 4.0
+7     28-USGS-PROVISIONAL-1008  Similarity score: 4.0
+7     29-IDENA-AG-1 http://www.cfnavarra.es/agricultura  Similarity score: 4.0
+7     30-IDENA-S-1 http://www.cfnavarra.es/salud  Similarity score: 4.0
+8     12-ign-fr-3 http://www.ign.fr  Similarity score: 4.0
+8     13-AEAG-7 http://data.eau-adour-garonne.fr http://www.eaufrance.fr  Similarity score: 4.0
+8     14-DIREN-1  Similarity score: 4.0
+8     15-SMEAG-1 http://www.garona-i-garonne.com http://www.garona-i-garonne.com/Territoire_71_3_3.php?pk_langue=3&id_page=71 http://www.smeag.fr  Similarity score: 4.0
+8     16-nuts http://geoportal.jrc.it/wmsconnector/WMSProxyServlet/JRC_GISCO_NUTS http://geoportal.jrc.it/wmsconnector/WMSProxyServlet/JRC_GISCO_COMMUNES  Similarity score: 4.0
+8     17-natura2k  Similarity score: 4.0
+8     18-eurographics-1  Similarity score: 4.0
+8     19-DMA-CHE-1 //Esco (Ipa.cps.unizar.es)  Similarity score: 4.0
+8     20-IDE-GV-1  Similarity score: 4.0
+8     21-CLC2000_aragon  Similarity score: 4.0
+8     23-img2k_2 ftp://ftplmu.jrc.it/outgoing/Image2000  Similarity score: 4.0
+8     24-USGS-BULLETIN-1 http://greenwood.cr.usgs.gov/pub/bulletins/b2064-a/hailey.tar  Similarity score: 4.0
+8     25-USGS-DIGITAL-170  Similarity score: 4.0
+8     26-USGS-MINERAL-247  Similarity score: 4.0
+8     27-USGS-REPORTS-751  Similarity score: 4.0
+8     28-USGS-PROVISIONAL-1008  Similarity score: 4.0
+8     29-IDENA-AG-1 http://www.cfnavarra.es/agricultura  Similarity score: 4.0
+8     30-IDENA-S-1 http://www.cfnavarra.es/salud  Similarity score: 4.0
+8     01-mtn25  Similarity score: 3.302585092994046
+8     05-mtn50  Similarity score: 3.302585092994046
+9     17-natura2k  Similarity score: 3.70805020110221

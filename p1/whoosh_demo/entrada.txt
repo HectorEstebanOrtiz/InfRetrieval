@@ -1,3 +1,0 @@
-creator:Pilar
-creator:Pilar AND publisher:derecho
-creator:Pilar AND publisher:derecho AND date:2014

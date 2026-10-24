@@ -11,6 +11,7 @@ Usage: python index.py -index <index folder> -docs <docs folder>
 #Autores: Ciro Fustero Zumeta (NIP: 900506) y Héctor Esteban Ortiz (NIP: 898030)
 
 from datetime import datetime
+from tkinter import NUMERIC
 from tkinter.tix import TEXT
 
 from whoosh.index import create_in
@@ -44,6 +45,10 @@ class MyIndex:
             subject=TEXT(analyzer=language_analyzer, stored=True),
             description=TEXT(analyzer=language_analyzer, stored=True),
             modtime=STORED,  # Campo STORED para la fecha de modificación
+            west=NUMERIC(stored=True, sortable=True),
+            east=NUMERIC(stored=True, sortable=True),
+            south=NUMERIC(stored=True, sortable=True),
+            north=NUMERIC(stored=True, sortable=True)
         )
         create_folder(index_folder)
         index = create_in(index_folder, schema)
@@ -72,12 +77,13 @@ class MyIndex:
     def index_xml_doc(self, foldername, filename):
         file_path = os.path.join(foldername, filename)
         # print(file_path)
+        #Sacamos la fecha de modificación del archivo y la convertimos a un formato legible
         mtime = os.path.getmtime(file_path)
         fecha_str = datetime.datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M:%S')
         tree = ET.parse(file_path)
         root = tree.getroot()
         #Inicializamos listas para almacenar los valores de cada etiqueta
-        titles, subjects, descriptions, anyos, autores, directores, departamentos, identificadores = [], [], [], [], [], [], [], []
+        titles, subjects, descriptions, anyos, autores, directores, departamentos, identificadores, wests, easts, souths, norths = [], [], [], [], [], [], [], [], [], [], [], []
 
         #Recorremos todas las etiquetas limpiando el namespace
         for elem in root.iter():
@@ -103,10 +109,20 @@ class MyIndex:
                         departamentos.append(clean_text)
                     elif tag_name == "identifier":
                         identificadores.append(clean_text)
+                    elif tag_name == "lowercorner":
+                        coords = clean_text.split()
+                        if len(coords) == 2:
+                            wests.append(float(coords[0]))   
+                            souths.append(float(coords[1]))  
+                    elif tag_name == "uppercorner":
+                        coords = clean_text.split()
+                        if len(coords) == 2:
+                            easts.append(float(coords[0]))   
+                            norths.append(float(coords[1]))
 
         
         #Añadimos el documento al índice con los campos correspondientes
-        self.writer.add_document(path=filename,title=" ".join(titles), subject=" ".join(subjects), description=" ".join(descriptions), date=" ".join(anyos), creator=" ".join(autores), contributor=" ".join(directores), publisher=" ".join(departamentos), identifier=" ".join(identificadores), modtime=fecha_str)
+        self.writer.add_document(path=filename,title=" ".join(titles), subject=" ".join(subjects), description=" ".join(descriptions), date=" ".join(anyos), creator=" ".join(autores), contributor=" ".join(directores), publisher=" ".join(departamentos), identifier=" ".join(identificadores), modtime=fecha_str, west=wests[0] if wests else None, east=easts[0] if easts else None, south=souths[0] if souths else None, north=norths[0] if norths else None)
 
 if __name__ == '__main__':
 

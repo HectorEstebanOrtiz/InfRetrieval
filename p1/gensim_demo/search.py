@@ -12,7 +12,7 @@ from gensim import corpora
 from gensim import models
 from gensim import similarities
 
-from gensim_demo import index
+import index
 import sys
 import json
 

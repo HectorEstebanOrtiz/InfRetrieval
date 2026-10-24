@@ -1,0 +1,9 @@
+desde xxx hasta xxx -> buscar por años ARREGLAR
+Palabras claves tésis y/o trabajo -> dc:type
+que tengan que ver, relacionados con, sobre -> buscar por temas/departamentos
+
+buscar palabras claves que reduzcan las búsquedas a departamentos específicos
+
+buscar palabras claves que describan un campo como "año", "departamento", "tema"
+
+llamado, nombre -> buscar en campos creator o colaborator
