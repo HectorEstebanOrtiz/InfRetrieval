@@ -21,6 +21,10 @@ import whoosh.index as index
 from whoosh.query import And, NumericRange, Or
 import re
 import spacy
+from datetime import datetime
+
+
+nlp = spacy.load("es_core_news_sm")
 
 class MySearcher:
     def __init__(self, index_folder, model_type = 'tfidf'):
@@ -72,64 +76,170 @@ class MySearcher:
                     print(f'   Last Date Modified: {result.get("modtime")}')
 
 def sacarFechas(text):
-    patrones = [
-        #"entre [el año] X y [el año] Y"
-        r'\bentre\s+(?:el\s+año\s+)?(\d{4})\s+y\s+(?:el\s+año\s+)?(\d{4})\b',
-        
-        #"desde/de [el [año]] X hasta [el [año]] Y"
-        # CORRECCIÓN 2: Se añade ?: en de|desde para que no lo capture
-        r'\b(?:de|desde)\s+(?:el(?:\s+año)?\s+)?(\d{4})\s+hasta\s+(?:el(?:\s+año)?\s+)?(\d{4})\b',
-        
-        #de/del/desde X al Y
-        r'\b(?:de|del|desde)\s+(\d{4})\s+(?:a|al)\s+(\d{4})\b',
-        
-        #en el año X/ del año X/ año X (fechas únicas)
-        r'\b(?:en\s+el\s+año|del\s+año|año|en)\s+(\d{4})\b'
+    anio_actual = datetime.now().year
+    texto_limpio = text
+
+    patronesRelativos = [
+        (r"\b(?:en\s+los\s+|los\s+)?[úu]ltimos\s+(\d+)\s+a[ñn]os\b", "menos"),
+        (
+            r"\b(?:que\s+tengan\s+|de\s+hace\s+|hace\s+|con\s+)?menos\s+de\s+(\d+)\s+a[ñn]os\b",
+            "menos",
+        ),
+        (
+            r"\b(?:que\s+tengan\s+|de\s+hace\s+|hace\s+|con\s+)?m[áa]s\s+de\s+(\d+)\s+a[ñn]os\b",
+            "mas",
+        ),
+        (r"\b(?:de\s+)?hace\s+(\d+)\s+a[ñn]os\b", "exacto"),
     ]
 
-    for patron in patrones:
-        match = re.search(patron, text, re.IGNORECASE)
+    for patron, tipo in patronesRelativos:
+        match = re.search(patron, texto_limpio, re.IGNORECASE)
+        if match:
+            cantidad_anios = int(match.group(1))
+
+            if tipo == "menos":
+                fecha_fin = anio_actual
+                fecha_inicio = anio_actual - cantidad_anios
+            elif tipo == "mas":
+                fecha_fin = anio_actual - cantidad_anios
+                fecha_inicio = None
+            elif tipo == "exacto":
+                fecha_inicio = anio_actual - cantidad_anios
+                fecha_fin = anio_actual - cantidad_anios
+
+            # Eliminamos el fragmento de fecha del texto original
+            texto_limpio = (
+                texto_limpio[: match.start()] + texto_limpio[match.end() :]
+            ).strip()
+            return fecha_inicio, fecha_fin, texto_limpio
+
+    # 2. REGLAS ABSOLUTAS
+    patronesAbsolutos = [
+        r"\bentre\s+(?:el\s+año\s+)?(\d{4})\s+y\s+(?:el\s+año\s+)?(\d{4})\b",
+        r"\b(?:de|desde)\s+(?:el(?:\s+año)?\s+)?(\d{4})\s+hasta\s+(?:el(?:\s+año)?\s+)?(\d{4})\b",
+        r"\b(?:de|del|desde)\s+(\d{4})\s+(?:a|al)\s+(\d{4})\b",
+        r'\b(?:(?:en|de|del)(?:\s+el)?(?:\s+año)?|año)\s+(\d{4})\b',
+    ]
+
+    for patron in patronesAbsolutos:
+        match = re.search(patron, texto_limpio, re.IGNORECASE)
         if match:
             grupos = match.groups()
-            
-            # Inicializamos a None por si acaso
-            fecha_fin = None 
-            
+
             if len(grupos) >= 2 and grupos[1] is not None:
                 fecha_inicio = int(grupos[0])
                 fecha_fin = int(grupos[1])
             else:
                 fecha_inicio = int(grupos[0])
-                
-            return fecha_inicio, fecha_fin
+                fecha_fin = int(grupos[0])
+
+            texto_limpio = (
+                texto_limpio[: match.start()] + texto_limpio[match.end() :]
+            ).strip()
+            return fecha_inicio, fecha_fin, texto_limpio
+
+    return None, None, texto_limpio
+
+
+def sacarEntidades(texto_limpio):
+    # Procesa directamente el texto sin los fragmentos de fechas
+    doc = nlp(texto_limpio)
+
+    # 1. Extraer entidades nombradas
+    entidades = list(doc.ents)
+
+    # 2. Extraer conceptos libres (sustantivos y adjetivos fuera de entidades y stopwords)
+    conceptos_libres = [
+        token.text
+        for token in doc
+        if token.pos_ in ["NOUN", "ADJ"]
+        and not token.is_stop
+        and not token.ent_type_
+    ]
+
+    return entidades, conceptos_libres
+    
+def sacarTipo(text):
+    patrones = [
+        (r'\btesis\b', "type:tesis"),
+        # Quitamos los paréntesis de aquí porque envolveremos todo junto al final
+        (r'\b(?:tfg|(?:trabajos?\s+de\s+)?fin de grado)\b', "type:TFG type:PFC"), 
+        (r'\b(?:tfm|(?:trabajos?\s+de\s+)?fin de m[aá]ster)\b', "type:TFM"),
+        (r'\btrabajos?\b', "type:TFG type:PFC type:TFM")
+    ]
+    
+    tipos_encontrados = []
+    texto_limpio = text
+    
+    for patron, tipo in patrones:
+        if re.search(patron, texto_limpio, re.IGNORECASE):
+            # Guardamos el tipo encontrado en la lista
+            tipos_encontrados.append(tipo)
             
-    # CORRECCIÓN 1: Este return va alineado con el for (fuera del bucle)
-    return None, None
+            # Borramos la palabra del texto
+            texto_limpio = re.sub(patron, "", texto_limpio, flags=re.IGNORECASE)
+            
+    # Limpiamos los espacios sobrantes al terminar todos los patrones
+    texto_limpio = re.sub(r'\s+', ' ', texto_limpio).strip()
+    
+    # Si hemos encontrado al menos un tipo (o varios)
+    if tipos_encontrados:
+        # Los unimos con un espacio y lo envolvemos TODO en un gran paréntesis
+        query_tipos = "(" + " ".join(tipos_encontrados) + ")"
+        return query_tipos, texto_limpio
+        
+    return None, texto_limpio
 
-def sacarEntidades(text):
-    nlp = spacy.load("es_core_news_sm")
-    doc = nlp(text)
-    return doc.ents
+def sacarIdioma(text):
+    patrones = [
+        (r'\bingl[eé]s\b', 'language:"eng"'),
+        (r'\bespañol\b', 'language:"spa"'),
+        (r'\bfranc[eé]s\b', 'language:"fre"'),
+        (r'\balem[aá]n\b', 'language:"ger"'),
+        (r'\bitaliano\b', 'language:"ita"')
+    ]
+    
+    lgn_encontrados = []
+    texto_limpio = text
+    
+    for patron, lgn in patrones:
+        if re.search(patron, texto_limpio, re.IGNORECASE):
+            # Guardamos el tipo encontrado en la lista
+            lgn_encontrados.append(lgn)
+            
+            # Borramos la palabra del texto
+            texto_limpio = re.sub(patron, "", texto_limpio, flags=re.IGNORECASE)
+            
+    # Limpiamos los espacios sobrantes al terminar todos los patrones
+    texto_limpio = re.sub(r'\s+', ' ', texto_limpio).strip()
+    
+    # Si hemos encontrado al menos un tipo (o varios)
+    if lgn_encontrados:
+        # Los unimos con un espacio y lo envolvemos TODO en un gran paréntesis
+        query_lgn = "(" + " ".join(lgn_encontrados) + ")"
+        return query_lgn, texto_limpio
+        
+    return None, texto_limpio
 
-def formarQuery(entidades, fecha_inicio=None, fecha_fin=None):
-    # Usamos una lista para ir guardando cada "pedazo" de la búsqueda
+def formarQuery(entidades, conceptos_libres, fecha_inicio=None, fecha_fin=None, tipo_doc=None, lgn = None):
     query_parts = []
     
     # 1. Gestionar las fechas
-    if fecha_inicio is not None and fecha_fin is not None:
-        # Añadimos el objeto NumericRange a la lista
-        rango = NumericRange("date", start=fecha_inicio, end=fecha_fin)
-        query_parts.append(rango)
+    if fecha_inicio is not None or fecha_fin is not None:
+        rango_fecha = NumericRange("date", start=fecha_inicio, end=fecha_fin)
+        rango_fecha.boost = 1.5 
+        query_parts.append(rango_fecha)
         
-    elif fecha_inicio is not None and fecha_fin is None:
-        # Si solo hay una fecha, lo guardamos como texto normal
-        query_parts.append(f"date:{fecha_inicio}")
-        
+    # 2. Gestionar el tipo de documento (Tesis, TFG, etc.)
+    if tipo_doc is not None:
+        query_parts.append(f"{tipo_doc}")
     
-    # 2. Gestionar las entidades de spaCy
+    if lgn is not None:
+        query_parts.append(f"{lgn}")
+        
+    # 3. Gestionar las entidades de spaCy (Añadido el OR)
     for entidad in entidades:
         texto = entidad.text
-        
         match entidad.label_:
             case "PER":
                 query_parts.append(f"(creator:{texto} OR contributor:{texto})")
@@ -138,10 +248,19 @@ def formarQuery(entidades, fecha_inicio=None, fecha_fin=None):
             case "MISC":
                 query_parts.append(f"subject:{texto}")
             case _:
-                pass # Ignoramos lo que no nos sirva
+                pass
+
+    # 4. Gestionar los conceptos libres (Añadidos los OR)
+    if conceptos_libres:
+        # Filtramos para que palabras como "tesis" o "trabajo" no se busquen doble
+        conceptos_filtrados = [c for c in conceptos_libres if c.lower() not in ["tesis", "trabajo", "tfg", "tfm"]]
+        
+        if conceptos_filtrados:
+            texto_libre = " ".join(conceptos_filtrados)
+            sub_query = f"(title:({texto_libre}) OR description:({texto_libre}) OR subject:({texto_libre}) OR publisher:({texto_libre}))"
+            query_parts.append(sub_query)
 
     query_final = " AND ".join(str(part) for part in query_parts)
-    
     return query_final
 
 
@@ -170,18 +289,22 @@ if __name__ == '__main__':
     #Caso en el que la query se introduce por teclado
     if(query_file is None):
         pregunta = input('Introduce a query: ')
-        entidades = sacarEntidades(pregunta)
-        fecha_inicio, fecha_fin = sacarFechas(pregunta)
+        fecha_inicio, fecha_fin, pregunta = sacarFechas(pregunta)
+        tipo_trabajo, pregunta = sacarTipo(pregunta)
+        lgn, pregunta = sacarIdioma(pregunta)
+        entidades, conceptos_libres = sacarEntidades(pregunta)
         print(fecha_inicio, fecha_fin)
-        query = formarQuery(entidades, fecha_inicio, fecha_fin)
+        query = formarQuery(entidades,conceptos_libres, fecha_inicio, fecha_fin, tipo_trabajo, lgn)
         idx=1
         while pregunta != 'q':
             searcher.search(query, idx, output_file, fecha)
             pregunta = input('Introduce a query (\'q\' for exit): ')
-            entidades = sacarEntidades(pregunta)
-            fecha_inicio, fecha_fin = sacarFechas(pregunta)
+            fecha_inicio, fecha_fin, pregunta = sacarFechas(pregunta)
+            tipo_trabajo, pregunta = sacarTipo(pregunta)
+            lgn, pregunta = sacarIdioma(pregunta)
+            entidades, conceptos_libres = sacarEntidades(pregunta)
             print(fecha_inicio, fecha_fin)
-            query = formarQuery(entidades, fecha_inicio, fecha_fin)
+            query = formarQuery(entidades,conceptos_libres, fecha_inicio, fecha_fin, tipo_trabajo, lgn)
             idx += 1
     #Caso en el que la query se introduce desde un fichero
     else:

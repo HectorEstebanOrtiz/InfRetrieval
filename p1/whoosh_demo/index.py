@@ -44,6 +44,8 @@ class MyIndex:
             title=TEXT(analyzer=language_analyzer, stored=True), 
             subject=TEXT(analyzer=language_analyzer, stored=True),
             description=TEXT(analyzer=language_analyzer, stored=True),
+            type=TEXT(analyzer=language_analyzer, stored=True),
+            language=TEXT(analyzer=language_analyzer, stored=True),
             modtime=STORED,  # Campo STORED para la fecha de modificación
             west=NUMERIC(stored=True, sortable=True),
             east=NUMERIC(stored=True, sortable=True),
@@ -83,7 +85,7 @@ class MyIndex:
         tree = ET.parse(file_path)
         root = tree.getroot()
         #Inicializamos listas para almacenar los valores de cada etiqueta
-        titles, subjects, descriptions, anyos, autores, directores, departamentos, identificadores, wests, easts, souths, norths = [], [], [], [], [], [], [], [], [], [], [], []
+        titles, subjects, descriptions, anyos, autores, directores, departamentos, identificadores, wests, easts, souths, norths, tipos, idiomas = [], [], [], [], [], [], [], [], [], [], [], [], [], []
 
         #Recorremos todas las etiquetas limpiando el namespace
         for elem in root.iter():
@@ -109,6 +111,10 @@ class MyIndex:
                         departamentos.append(clean_text)
                     elif tag_name == "identifier":
                         identificadores.append(clean_text)
+                    elif tag_name == "type":
+                        tipos.append(clean_text)
+                    elif tag_name == "language":
+                        idiomas.append(clean_text)
                     elif tag_name == "lowercorner":
                         coords = clean_text.split()
                         if len(coords) == 2:
@@ -122,7 +128,7 @@ class MyIndex:
 
         
         #Añadimos el documento al índice con los campos correspondientes
-        self.writer.add_document(path=filename,title=" ".join(titles), subject=" ".join(subjects), description=" ".join(descriptions), date=" ".join(anyos), creator=" ".join(autores), contributor=" ".join(directores), publisher=" ".join(departamentos), identifier=" ".join(identificadores), modtime=fecha_str, west=wests[0] if wests else None, east=easts[0] if easts else None, south=souths[0] if souths else None, north=norths[0] if norths else None)
+        self.writer.add_document(path=filename,title=" ".join(titles), subject=" ".join(subjects), description=" ".join(descriptions), date=" ".join(anyos), creator=" ".join(autores), contributor=" ".join(directores), publisher=" ".join(departamentos), identifier=" ".join(identificadores), type=" ".join(tipos), language=" ".join(idiomas) ,modtime=fecha_str, west=wests[0] if wests else None, east=easts[0] if easts else None, south=souths[0] if souths else None, north=norths[0] if norths else None)
 
 if __name__ == '__main__':
 
