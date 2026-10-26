@@ -22,7 +22,7 @@ from whoosh.query import And, NumericRange, Or
 import re
 import spacy
 from datetime import datetime
-
+import xml.etree.ElementTree as ET
 
 nlp = spacy.load("es_core_news_sm")
 
@@ -263,6 +263,22 @@ def formarQuery(entidades, conceptos_libres, fecha_inicio=None, fecha_fin=None, 
     query_final = " AND ".join(str(part) for part in query_parts)
     return query_final
 
+def leerNecesidadesInformacion(ruta_fichero):
+    consultas = []
+    # Parseamos el fichero XML
+    tree = ET.parse(ruta_fichero)
+    root = tree.getroot()
+    
+    # Buscamos todos los bloques <informationNeed>
+    for info_need in root.findall('informationNeed'):
+        # Extraemos el texto de <identifier> y <text>
+        identificador = info_need.find('identifier').text.strip()
+        texto = info_need.find('text').text.strip()
+        
+        # Lo guardamos como una tupla (ID, Pregunta)
+        consultas.append((identificador, texto))
+        
+    return consultas
 
 if __name__ == '__main__':
     index_folder = '../whooshindex'
@@ -309,10 +325,19 @@ if __name__ == '__main__':
     #Caso en el que la query se introduce desde un fichero
     else:
         #Abrimos el fichero de queries y leemos todas las líneas
-        with open(query_file, 'r', encoding='utf-8') as f:#encoding='utf-8' para que funcione con acentos y ñ
-            queries = f.readlines()
-        i = 1
+        #with open(query_file, 'r', encoding='utf-8') as f:#encoding='utf-8' para que funcione con acentos y ñ
+        #    queries = f.readlines()
+        #i = 1
         #Pasamos todas las queries al método search y vamos incrementando el índice de la query
-        for query in queries:
-            searcher.search(query, i, output_file, fecha)
-            i += 1
+        #for query in queries:
+        #    searcher.search(query, i, output_file, fecha)
+        #    i += 1
+        #MODIFICO ESTO PARA PROBAR EL FICHERO DE ENTRADA Y ASI PERMITIR TAMBIEN LAS PRUEBAS UNITARIAS
+        lista_consultas = leerNecesidadesInformacion(query_file)
+        for idx, pregunta in lista_consultas:
+            fecha_inicio, fecha_fin, pregunta = sacarFechas(pregunta)
+            tipo_trabajo, pregunta = sacarTipo(pregunta)
+            lgn, pregunta = sacarIdioma(pregunta)
+            entidades, conceptos_libres = sacarEntidades(pregunta)
+            query = formarQuery(entidades,conceptos_libres, fecha_inicio, fecha_fin, tipo_trabajo, lgn)
+            searcher.search(query, idx, output_file, fecha)
