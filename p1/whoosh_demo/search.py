@@ -24,7 +24,7 @@ import spacy
 from datetime import datetime
 import xml.etree.ElementTree as ET
 
-nlp = spacy.load("es_core_news_sm")
+nlp = spacy.load("es_core_news_md") #cambiamos a medio para ver si deja de confundir España con un apellido
 
 class MySearcher:
     def __init__(self, index_folder, model_type = 'tfidf'):
@@ -70,7 +70,7 @@ class MySearcher:
                             print(f'   Last Date Modified: {result.get("modtime")}')
                 print('Check output file for results')
         else:
-            for i, result in enumerate(results, start=1):
+            for i, result in enumerate(results[:100], start=1):
                 print(f'{i} - File path: {result.get("path")}, Similarity score: {result.score}')
                 if show_info:
                     print(f'   Last Date Modified: {result.get("modtime")}')
@@ -227,7 +227,6 @@ def formarQuery(entidades, conceptos_libres, fecha_inicio=None, fecha_fin=None, 
     # 1. Gestionar las fechas
     if fecha_inicio is not None or fecha_fin is not None:
         rango_fecha = NumericRange("date", start=fecha_inicio, end=fecha_fin)
-        rango_fecha.boost = 1.5 
         query_parts.append(rango_fecha)
         
     # 2. Gestionar el tipo de documento (Tesis, TFG, etc.)
@@ -260,7 +259,7 @@ def formarQuery(entidades, conceptos_libres, fecha_inicio=None, fecha_fin=None, 
             sub_query = f"(title:({texto_libre}) OR description:({texto_libre}) OR subject:({texto_libre}) OR publisher:({texto_libre}))"
             query_parts.append(sub_query)
 
-    query_final = " AND ".join(str(part) for part in query_parts)
+    query_final = " OR ".join(str(part) for part in query_parts)
     return query_final
 
 def leerNecesidadesInformacion(ruta_fichero):
