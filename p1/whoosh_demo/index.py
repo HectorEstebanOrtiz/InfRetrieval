@@ -41,11 +41,11 @@ class MyIndex:
             contributor=TEXT(analyzer=language_analyzer, stored=True), #Director acargo
             publisher=TEXT(analyzer=language_analyzer, stored=True), #Departamento publicador
             date=TEXT(analyzer=language_analyzer, stored=True), #Año de publicación
-            title=TEXT(analyzer=language_analyzer, stored=True), 
-            subject=TEXT(analyzer=language_analyzer, stored=True),
-            description=TEXT(analyzer=language_analyzer, stored=True),
-            type=TEXT(analyzer=language_analyzer, stored=True),
-            language=TEXT(analyzer=language_analyzer, stored=True),
+            title=TEXT(analyzer=language_analyzer, stored=True), #título
+            subject=TEXT(analyzer=language_analyzer, stored=True), #resumen del tema
+            description=TEXT(analyzer=language_analyzer, stored=True), #descripción del contenido
+            type=TEXT(analyzer=language_analyzer, stored=True), #tesis/tfg/tfm/pfc
+            language=TEXT(analyzer=language_analyzer, stored=True), #idioma en el que está el trabajo
             modtime=STORED,  # Campo STORED para la fecha de modificación
             west=NUMERIC(stored=True, sortable=True),
             east=NUMERIC(stored=True, sortable=True),

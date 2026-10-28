@@ -36,7 +36,7 @@ class MySearcher:
             # Apply the probabilistic BM25F model, the default model in searcher method
             self.searcher = ix.searcher()
         #Añadimos los campos nuevos del schema al parser
-        self.parser = MultifieldParser(["content", "title", "subject", "description", "date", "creator", "contributor", "publisher", "identifier", "west", "east", "south", "north"], ix.schema, group = OrGroup)
+        self.parser = MultifieldParser(["content", "title", "subject", "description", "creator", "contributor", "publisher", "identifier", "date", "west", "east", "north", "south"], ix.schema, group = OrGroup)
 
     def search(self, query_text, query_idx, output, show_info=False):
         spatial_query = None
@@ -65,7 +65,7 @@ class MySearcher:
         if output is not None:
                 with open(output, 'a', encoding='utf-8') as f:
                     for i, result in enumerate(results[:100], start=1):
-                        print(f'{query_idx}     {result.get("identifier")}  Similarity score: {result.score}', file=f)
+                        print(f'{query_idx}     {result.get("identifier")}', file=f)
                         if show_info:
                             print(f'   Last Date Modified: {result.get("modtime")}')
                 print('Check output file for results')
@@ -241,11 +241,11 @@ def formarQuery(entidades, conceptos_libres, fecha_inicio=None, fecha_fin=None, 
         texto = entidad.text
         match entidad.label_:
             case "PER":
-                query_parts.append(f"(creator:{texto} OR contributor:{texto})")
+                query_parts.append(f"creator:({texto}) contributor:({texto}) title:({texto}) description:({texto})")
             case "LOC" | "ORG":
-                query_parts.append(f"publisher:{texto}")
+                query_parts.append(f"publisher:({texto}) title:({texto}) description:({texto})")
             case "MISC":
-                query_parts.append(f"subject:{texto}")
+                query_parts.append(f"subject:({texto}) title:({texto}) description:({texto})")
             case _:
                 pass
 
@@ -256,10 +256,10 @@ def formarQuery(entidades, conceptos_libres, fecha_inicio=None, fecha_fin=None, 
         
         if conceptos_filtrados:
             texto_libre = " ".join(conceptos_filtrados)
-            sub_query = f"(title:({texto_libre}) OR description:({texto_libre}) OR subject:({texto_libre}) OR publisher:({texto_libre}))"
+            sub_query = f"title:({texto_libre}) description:({texto_libre}) subject:({texto_libre}) publisher:({texto_libre})"
             query_parts.append(sub_query)
 
-    query_final = " OR ".join(str(part) for part in query_parts)
+    query_final = " ".join(str(part) for part in query_parts)
     return query_final
 
 def leerNecesidadesInformacion(ruta_fichero):
