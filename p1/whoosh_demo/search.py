@@ -27,7 +27,7 @@ import xml.etree.ElementTree as ET
 nlp = spacy.load("es_core_news_md") #cambiamos a medio para ver si deja de confundir España con un apellido
 
 class MySearcher:
-    def __init__(self, index_folder, model_type = 'tfidf'):
+    def __init__(self, index_folder, model_type = 'BM25F'):
         ix = index.open_dir(index_folder)
         if model_type == 'tfidf':
             # Apply a vector retrieval model as default
