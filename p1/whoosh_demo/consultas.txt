@@ -1,9 +1,0 @@
-creator:Pilar
-creator:Pilar AND publisher:derecho
-creator:Pilar AND title:derecho 
-creator:Pilar AND contributor:Pablo AND publisher:Psicología
-creator:Pilar AND contributor:Pablo AND description:niños
-creator:Pilar AND contributor:Pablo AND description:niños AND publisher:Psicología AND date:2020 AND subject:educación AND title:académico
-spatial:-180.0,180.0,-90.0,90.0 title:natura
-spatial:-180.0,180.0,-90.0,90.0 title:nacional
-title:natura
