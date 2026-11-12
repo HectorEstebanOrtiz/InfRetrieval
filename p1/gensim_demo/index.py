@@ -20,8 +20,8 @@ from nltk.stem.snowball import SnowballStemmer
 
 import json
 
-LANGUAGE = 'english'
-#LANGUAGE = 'spanish'
+#LANGUAGE = 'english'
+LANGUAGE = 'spanish'
 
 STOP_LIST = None
 

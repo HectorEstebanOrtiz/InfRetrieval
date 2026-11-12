@@ -15,8 +15,9 @@ from gensim import similarities
 import index
 import sys
 import json
+import xml.etree.ElementTree as ET
 
-def search(index_folder, query):
+def search(index_folder, query, query_identifier = None, file = None):
     dictionary = corpora.Dictionary.load(index.get_dictionary_file_name(index_folder))
 
     query_document = index.generate_terms(query)
@@ -40,11 +41,36 @@ def search(index_folder, query):
     for document_number, score in sorted(enumerate(sims), key=lambda x: x[1], reverse=True):
         if score == 0.0 or i > 100:
             break
-        print(f'{i} - File path: {file_paths[document_number]}, Similarity score: {score}')
+        url = 'http://zaguan.unizar.es/record/' + file_paths[document_number].replace('oai_zaguan.unizar.es_','').replace('.xml','')
+        if(file is not None):
+            with open(file, 'a') as f:
+                f.write(f'{query_identifier}\t{url}\n')
+        else:
+            print(f'{i} - File path: {file_paths[document_number]}, Similarity score: {score}')
         i += 1
+
+
+def leerNecesidadesInformacion(ruta_fichero):
+    consultas = []
+    #Parseamos el fichero XML
+    tree = ET.parse(ruta_fichero)
+    root = tree.getroot()
+    
+    #Buscamos todos los bloques <informationNeed>
+    for info_need in root.findall('informationNeed'):
+        #Extraemos el texto de <identifier> y <text>
+        identificador = info_need.find('identifier').text.strip()
+        texto = info_need.find('text').text.strip()
+        
+        #Lo guardamos como una tupla (ID, Pregunta)
+        consultas.append((identificador, texto))
+        
+    return consultas
 
 if __name__ == '__main__':
     index_folder = '../gensimindex'
+    query_file = None
+    output_file = None
     i = 1
     while (i < len(sys.argv)):
         if sys.argv[i] == '-index':
@@ -54,7 +80,17 @@ if __name__ == '__main__':
             # -language is expected to be either 'english' or 'spanish'
             index.LANGUAGE = sys.argv[i + 1]
             i = i + 1
+        elif sys.argv[i] == '-infoNeeds':
+            query_file = sys.argv[i + 1]
+            i = i + 1
+        elif sys.argv[i] == '-output':
+            output_file = sys.argv[i+1]
+            i = i + 1
         i = i + 1
+    if query_file is not None:
+        lista_consultas = leerNecesidadesInformacion(query_file)
+        for idx, pregunta in lista_consultas:
+            search(index_folder, pregunta, idx, output_file)
 
     #query = 'system engineering'
     query = input('Introduce a query: ')

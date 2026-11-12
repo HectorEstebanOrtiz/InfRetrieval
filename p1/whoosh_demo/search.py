@@ -27,7 +27,7 @@ import xml.etree.ElementTree as ET
 nlp = spacy.load("es_core_news_md") #Hemos decidido usar el modelo medio para que tenga menos equivocaciones (Antes ponia algunos nombres como lugares y lugares como nombres)
 
 class MySearcher:
-    def __init__(self, index_folder, model_type = 'BM25F'):
+    def __init__(self, index_folder, model_type = 'bm25f'): #Hemos decidido usar el modelo BM25F, a diferemcia del modelo TFIDF, que es el que usábamos en la p2.
         ix = index.open_dir(index_folder)
         if model_type == 'tfidf':
             # Apply a vector retrieval model as default
@@ -36,7 +36,10 @@ class MySearcher:
             # Apply the probabilistic BM25F model, the default model in searcher method
             self.searcher = ix.searcher()
         #Añadimos los campos nuevos del schema al parser
-        self.parser = MultifieldParser(["content", "title", "subject", "description", "creator", "contributor", "publisher", "identifier", "date", "west", "east", "north", "south"], ix.schema, group = OrGroup)
+        self.parser = MultifieldParser(
+            ["content", "title", "subject", "description", "creator", "contributor", "publisher", "identifier", "date", "west", "east", "north", "south"],
+              ix.schema, 
+              group = OrGroup)
 
     def search(self, query_text, query_idx, output, show_info=False):
         spatial_query = None

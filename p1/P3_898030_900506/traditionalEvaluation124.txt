@@ -35,6 +35,7 @@ interpolated_recall_precision
 0.800  0.000
 0.900  0.000
 1.000  0.000
+
 INFORMATION_NEED 2
 precision 0.533
 recall 0.453
@@ -78,6 +79,7 @@ interpolated_recall_precision
 0.800  0.000
 0.900  0.000
 1.000  0.000
+
 INFORMATION_NEED 3
 precision 0.600
 recall 0.391
@@ -124,6 +126,7 @@ interpolated_recall_precision
 0.800  0.000
 0.900  0.000
 1.000  0.000
+
 INFORMATION_NEED 4
 precision 0.422
 recall 0.500
@@ -162,6 +165,7 @@ interpolated_recall_precision
 0.800  0.000
 0.900  0.000
 1.000  0.000
+
 INFORMATION_NEED 5
 precision 0.333
 recall 0.319
@@ -196,12 +200,13 @@ interpolated_recall_precision
 0.800  0.000
 0.900  0.000
 1.000  0.000
+
 TOTAL
 precision 0.458
 recall 0.453
 F1 0.455
 prec@10 0.760
-average_precision 0.695
+MAP 0.695
 interpolated_recall_precision
 0.000  1.000
 0.100  0.883
